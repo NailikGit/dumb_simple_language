@@ -1,11 +1,10 @@
 // function declaration
-fuc int -> something -> int {
-  // the parameters are always named alphabetically
+fuc int a -> something -> int {
   a + 1 |>; // return
 }
 
 // to pass multiple parameters you put them in brackets
-fuc (int, int) -> something_else -> int { 
+fuc (int a, int b) -> something_else -> int { 
   a + b |>;
 }
 
