@@ -29,6 +29,7 @@ struct ASTnode {
 extern_ int line;
 extern_ char tmp;
 extern_ FILE* in_file;
+extern_ FILE* out_file;
 extern_ struct token token;
 
 #endif

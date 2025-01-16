@@ -8,7 +8,7 @@ struct ASTnode* mk_ast_leaf(int op, int intvalue);
 
 struct ASTnode* mk_ast_unary(int op, struct ASTnode* left, int intvalue);
 
-struct ASTnode* bin_expr(void);
+struct ASTnode* bin_expr(int ptp);
 
 int interpret_AST(struct ASTnode* n);
 

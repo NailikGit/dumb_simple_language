@@ -58,22 +58,41 @@ static struct ASTnode* primary() {
   }
 }
 
-struct ASTnode* bin_expr() {
-  struct ASTnode *n, *left, *right;
-  int nodetype;
+static int opprec[] = {0, 10, 10, 20, 20, 0};
+                  // {EOF,  +,  -,  *,  /, INTLIT}
+
+static int op_prec(int token_type) {
+  int prec = opprec[token_type];
+
+  if(prec == 0) {
+    fprintf(stderr, "[ERROR] syntax error on line %d, token %d\n", line, token_type);
+    exit(1);
+  }
+
+  return prec;
+}
+
+struct ASTnode* bin_expr(int ptp) {
+  struct ASTnode *left, *right;
+  int token_type;
 
   left = primary();
 
-  if(token.token == T_EOF) return left;
+  token_type = token.token;
+  if(token_type == T_EOF) return left;
 
-  nodetype = arith_op(token.token);
+  while(op_prec(token_type) > ptp) {
+    scan(&token);
 
-  scan(&token);
+    right = bin_expr(op_prec(token_type));
 
-  right = bin_expr();
+    left = mk_ast_node(arith_op(token_type), left, right, 0);
 
-  n = mk_ast_node(nodetype, left, right, 0);
-  return n;
+    token_type = token.token;
+    if(token_type == T_EOF) break;
+  }
+
+  return left;
 }
 
 int interpret_AST(struct ASTnode* n) {
@@ -98,3 +117,4 @@ int interpret_AST(struct ASTnode* n) {
       exit(1);
   }
 }
+
