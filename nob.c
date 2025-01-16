@@ -2,8 +2,7 @@
 #include "nob.h"
 
 const char* modules[] = {
-  "lexer",
-  // "parser"
+  "parser"
 };
 
 void build() {
