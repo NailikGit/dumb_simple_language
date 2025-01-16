@@ -1,20 +1,4 @@
-#include <ctype.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-enum tokens {
-  T_PLUS, T_MINUS, T_MULT, T_DIV, T_INTLIT
-};
-
-struct token {
-  char token;
-  int value;
-};
-
-extern int line;
-extern char tmp;
-extern FILE* in_file;
+#include "lexer.h"
 
 static char next() {
   char c;
@@ -44,16 +28,22 @@ static char skip() {
 
   return c;
 }
+ 
+static int chr_pos(char* s, char c) {
+  char* p = strchr(s, c);
+  return (p ? p - s : -1);
+}
 
 static int scan_int(char c) {
   int k, val = 0;
 
-  while((k = chrpos("0123456789", c)) >= 0) {
+  while((k = chr_pos("0123456789", c)) >= 0) {
     val = val * 10 + k;
     c = next();
   }
 
   put_back(c);
+  return val;
 }
 
 int scan(struct token* t) {
