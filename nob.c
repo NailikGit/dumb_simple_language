@@ -41,21 +41,22 @@ int main(int argc, char** argv) {
   nob_mkdir_if_not_exists("build");
   build_objects();
   Nob_Cmd cmd = {0};
+  Nob_String_Builder sbs[NOB_ARRAY_LEN(modules)] = {0};
 
   nob_cmd_append(&cmd, "clang", "-Wall", "-Wextra", "-g", "src/main.c");
   for(int i = 0; i < NOB_ARRAY_LEN(modules); i++) {
-    Nob_String_Builder sb = {0};
-    sb.count = 0;
-    nob_sb_append_cstr(&sb, "build/");
-    nob_sb_append_cstr(&sb, modules[i]);
-    nob_sb_append_cstr(&sb, ".o");
-    nob_sb_append_null(&sb);
-
-    nob_cmd_append(&cmd, sb.items);
+    nob_sb_append_cstr(&sbs[i], "build/");
+    nob_sb_append_cstr(&sbs[i], modules[i]);
+    nob_sb_append_cstr(&sbs[i], ".o");
+    nob_sb_append_null(&sbs[i]);
+    nob_cmd_append(&cmd, sbs[i].items);
   }
   nob_cmd_append(&cmd, "-o", "build/main");
   nob_cmd_run_sync(cmd);
-
+  
+  for(int i = 0; i < NOB_ARRAY_LEN(modules); i++) {
+    nob_sb_free(sbs[i]);
+  }
   nob_cmd_free(cmd);
 
   return 0;
