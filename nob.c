@@ -2,7 +2,8 @@
 #include "nob.h"
 
 const char* modules[] = {
-  "lexer"
+  "lexer",
+  "parser"
 };
 
 void build_objects() {
@@ -40,13 +41,13 @@ int main(int argc, char** argv) {
   nob_mkdir_if_not_exists("build");
   build_objects();
   Nob_Cmd cmd = {0};
-  Nob_String_Builder sb = {0};
 
-  nob_cmd_append(&cmd, "clang", "src/main.c");
+  nob_cmd_append(&cmd, "clang", "-Wall", "-Wextra", "-g", "src/main.c");
   for(int i = 0; i < NOB_ARRAY_LEN(modules); i++) {
+    Nob_String_Builder sb = {0};
     sb.count = 0;
     nob_sb_append_cstr(&sb, "build/");
-    nob_sb_append_cstr(&sb, modules[0]);
+    nob_sb_append_cstr(&sb, modules[i]);
     nob_sb_append_cstr(&sb, ".o");
     nob_sb_append_null(&sb);
 
@@ -55,7 +56,6 @@ int main(int argc, char** argv) {
   nob_cmd_append(&cmd, "-o", "build/main");
   nob_cmd_run_sync(cmd);
 
-  nob_sb_free(sb);
   nob_cmd_free(cmd);
 
   return 0;
