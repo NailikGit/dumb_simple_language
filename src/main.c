@@ -1,3 +1,6 @@
+#define extern_
+#include "data.h"
+#undef extern_
 #include "lexer.h"
 #include <stdio.h>
 
@@ -16,8 +19,10 @@ static void scanfile() {
 int main(int argc, char* argv[]) {
   if(argc == 1) {
     fprintf(stderr, "[ERROR] no input file provided");
-    exit(1);
+    return 1;
   }
+  line = 0;
+  tmp = 0;
   in_file = fopen(argv[1], "r");
 
   scanfile();

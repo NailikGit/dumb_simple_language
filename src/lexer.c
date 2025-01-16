@@ -1,4 +1,8 @@
+#include "data.h"
 #include "lexer.h"
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 
 static char next() {
   char c;
