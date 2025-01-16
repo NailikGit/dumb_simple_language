@@ -2,10 +2,10 @@
 #include "nob.h"
 
 const char* modules[] = {
-  "parser"
+  "lexer"
 };
 
-void build() {
+void build_objects() {
   Nob_Cmd cmd = {0};
   Nob_String_Builder source = {0};
   Nob_String_Builder out = {0};
@@ -28,12 +28,27 @@ void build() {
 
     nob_cmd_run_sync_and_reset(&cmd);
   }
+
+  nob_sb_free(source);
+  nob_sb_free(out);
+  nob_cmd_free(cmd);
 }
 
 int main(int argc, char** argv) {
   NOB_GO_REBUILD_URSELF(argc, argv);
 
   nob_mkdir_if_not_exists("build");
-  build();
+  build_objects();
+  Nob_Cmd cmd = {0};
+  Nob_String_Builder sb = {0};
+
+  nob_cmd_append(&cmd, "clang", "src/main.c");
+  for(int i = 0; i < NOB_ARRAY_LEN(modules); i++) {
+    nob_sb_append_cstr(&sb, "build/");
+    nob_sb_append_cstr(&sb, modules[0]);
+    nob_sb_append_cstr(&sb, ".o");
+  }
+  nob_cmd_append(&cmd, "-o", "build/main");
+
   return 0;
 }
