@@ -44,11 +44,19 @@ int main(int argc, char** argv) {
 
   nob_cmd_append(&cmd, "clang", "src/main.c");
   for(int i = 0; i < NOB_ARRAY_LEN(modules); i++) {
+    sb.count = 0;
     nob_sb_append_cstr(&sb, "build/");
     nob_sb_append_cstr(&sb, modules[0]);
     nob_sb_append_cstr(&sb, ".o");
+    nob_sb_append_null(&sb);
+
+    nob_cmd_append(&cmd, sb.items);
   }
   nob_cmd_append(&cmd, "-o", "build/main");
+  nob_cmd_run_sync(cmd);
+
+  nob_sb_free(sb);
+  nob_cmd_free(cmd);
 
   return 0;
 }
