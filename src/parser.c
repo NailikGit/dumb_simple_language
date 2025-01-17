@@ -79,7 +79,7 @@ struct ASTnode* bin_expr(int ptp) {
   left = primary();
 
   token_type = token.token;
-  if(token_type == T_EOF) return left;
+  if(token_type == T_SEMI) return left;
 
   while(op_prec(token_type) > ptp) {
     scan(&token);
@@ -89,7 +89,7 @@ struct ASTnode* bin_expr(int ptp) {
     left = mk_ast_node(arith_op(token_type), left, right, 0);
 
     token_type = token.token;
-    if(token_type == T_EOF) break;
+    if(token_type == T_SEMI) break;
   }
 
   return left;
@@ -117,4 +117,3 @@ int interpret_AST(struct ASTnode* n) {
       exit(1);
   }
 }
-

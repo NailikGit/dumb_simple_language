@@ -1,6 +1,7 @@
 #include "data.h"
 #include "lexer.h"
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -50,8 +51,39 @@ static int scan_int(char c) {
   return val;
 }
 
+static int scan_indent(char c, char* buf, int lim) {
+  int i = 0;
+
+  while(isalpha(c) || isdigit(c) || c == '_') {
+    if(lim - 1 == i) {
+      fprintf(stderr, "[ERROR] identifier to long in line %d\n", line);
+      exit(1);
+    } else if(i < lim - 1) {
+      buf[i++] = c;
+    }
+
+    c = next();
+  }
+
+  put_back(c);
+  buf[i] = 0;
+  return i;
+}
+
+static int keyword(char* s) {
+  switch(*s) {
+    case 'p':
+      if(!strcmp(s, "print")) return T_PRINT;
+      break;
+  }
+
+  return 0;
+}
+
 int scan(struct token* t) {
   char c = skip();
+
+  int token_type;
 
   switch(c) {
     case EOF:
@@ -69,11 +101,24 @@ int scan(struct token* t) {
     case '/':
       t->token = T_DIV;
       break;
+    case ';':
+      t->token = T_SEMI;
+      break;
     default:
       if(isdigit(c)) {
         t->value = scan_int(c);
         t->token = T_INTLIT;
         break;
+      } else if(isalpha(c) || c == '_') {
+        scan_indent(c, text, text_len);
+
+        if((token_type = keyword(text))) {
+          t->token = token_type;
+          break;
+        }
+
+        fprintf(stderr, "[ERROR] unrecognised symbol on line %d\n", line);
+        exit(1);
       }
 
       printf("Unrecognised character %c on line %d\n", c, line);

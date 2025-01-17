@@ -3,38 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int gen_AST(struct ASTnode* n) {
-  int leftreg, rightreg;
-
-  if(n->left) leftreg = gen_AST(n->left);
-  if(n->right) rightreg = gen_AST(n->right);
-
-  switch(n->op) {
-    case A_ADD:
-      return cg_add(leftreg, rightreg);
-    case A_SUB:
-      return cg_sub(leftreg, rightreg);
-    case A_MULT:
-      return cg_mul(leftreg, rightreg);
-    case A_DIV:
-      return cg_div(leftreg, rightreg);
-    case A_INTLIT:
-      return cg_load(n->value);
-    default:
-      fprintf(stderr, "[ERROR] unknown AST operator %d\n", n->op);
-      exit(1);
-  }
-}
-
-void generate_code(struct ASTnode* n) {
-  int reg;
-
-  cg_preamble();
-  reg = gen_AST(n);
-  cg_print_int(reg);
-  cg_postamble();
-}
-
 static int free_reg[4];
 static char* reg_list[4] = {"r8", "r9", "r10", "r11"};
 
@@ -63,7 +31,7 @@ static void free_register(int reg) {
 }
 
 void cg_preamble() {
-  freeall_registers();
+  free_all_registers();
   fputs("\tglobal\tmain\n"
         "\textern\tprintf\n"
         "\tsection\t.text\n"
