@@ -4,7 +4,9 @@
 const char* modules[] = {
   "lexer",
   "parser",
-  "generator"
+  "cg",
+  "gen",
+  "stmt"
 };
 
 void build_objects() {
