@@ -1,5 +1,5 @@
 #include "data.h"
-#include "generator.h"
+#include "cg.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,7 +38,7 @@ void generate_code(struct ASTnode* n) {
 static int free_reg[4];
 static char* reg_list[4] = {"r8", "r9", "r10", "r11"};
 
-void freeall_registers() {
+void free_all_registers() {
   free_reg[0] = free_reg[1] = free_reg[2] = free_reg[3] = 1;
 }
 

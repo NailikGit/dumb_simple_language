@@ -3,7 +3,7 @@
 
 void generate_code(struct ASTnode *n);
 
-void freeall_registers(void);
+void free_all_registers(void);
 
 void cg_preamble();
 
